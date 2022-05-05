@@ -1,3 +1,4 @@
 {
-    "makefile.extensionOutputFolder": "./.vscode"
+    "makefile.extensionOutputFolder": "./.vscode",
+    "sonarlint.pathToCompileCommands": "/home/thebest/code/c_rslib/compile_commands.json"
 }

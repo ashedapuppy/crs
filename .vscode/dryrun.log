@@ -1,0 +1,19 @@
+make --dry-run --keep-going --print-directory
+make: Entering directory '/home/thebest/code/c_rslib'
+make --no-print-directory  -C lib
+echo "compiling rust library..."
+(cargo build)
+cp ./target/debug/libcrs.a ./
+cp ./target/debug/libcrs.so ./
+echo "generating header file..."
+cbindgen > crs.h
+echo "creating include directory..."
+mkdir -p include
+cp lib/crs.h include
+echo "compiling object files..."
+gcc -Wall -Wextra -Werror -g3 -O2 -std=c99 -Iinclude/ -c src/call_rust.c -o src/call_rust.o -Llib/  -lcrs
+echo "compiling executable..."
+gcc src/call_rust.o -o project -Llib/  -lcrs
+echo "Done!"
+make: Leaving directory '/home/thebest/code/c_rslib'
+ 
