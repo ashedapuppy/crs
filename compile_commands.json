@@ -1,0 +1,20 @@
+[
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-g3",
+            "-O2",
+            "-std=c99",
+            "-Iinclude/",
+            "-o",
+            "src/call_rust.o",
+            "src/call_rust.c"
+        ],
+        "directory": "/home/thebest/code/clibrs",
+        "file": "src/call_rust.c"
+    }
+]
