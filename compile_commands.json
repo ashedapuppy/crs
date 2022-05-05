@@ -14,7 +14,7 @@
             "src/call_rust.o",
             "src/call_rust.c"
         ],
-        "directory": "/home/thebest/code/clibrs",
+        "directory": "/home/thebest/code/c_rslib",
         "file": "src/call_rust.c"
     }
 ]

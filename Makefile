@@ -1,3 +1,4 @@
+MAKE 	   = make --no-print-directory 
 CC         = gcc
 CFLAGS     = -Wall -Wextra -Werror -g3 -O2 -std=c99
 CPPFLAGS   = -Iinclude/
@@ -43,22 +44,20 @@ obj_echo:
 	@${CC} ${CFLAGS} ${CPPFLAGS} -c $< -o $@ ${LDFLAGS} ${LDLIBS}
 
 crs:
-	@make -C lib
+	@$(MAKE) -C lib
 
 include_dir: 
 	@echo "creating include directory..."
 	@mkdir -p include
 
-
 lib_clean: lib_clean_header
-	@make -C lib clean
+	@$(MAKE) -C lib clean
 
 lib_fclean: lib_clean_header
-	@make -C lib fclean
+	@$(MAKE) -C lib fclean
 
 lib_clean_header:
 	$(RM) include/$(LIB_HEADER)
-
 
 src_clean:
 	$(RM) $(OBJ)

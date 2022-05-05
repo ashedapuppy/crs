@@ -12,13 +12,13 @@ all: build
 
 build:
 	@echo "compiling rust library..."
-	(cargo build)
+	@(cargo build)
 
 test: 
-	(cargo test)
+	@(cargo test)
 
 clean: 
-	(cargo clean)
+	@(cargo clean)
 
 fclean: clean
 	$(RM) $(OUT_STATIC)
