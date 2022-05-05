@@ -1,7 +1,0 @@
-#!/bin/sh
-
-if [ -e ./project ]; then 
-    LD_LIBRARY_PATH=lib/ ./project 
-else 
-    echo "error: (no_executable): call 'make' to compile the project first"
-fi
