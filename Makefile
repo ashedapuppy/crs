@@ -16,13 +16,23 @@ SRC        = $(addsuffix .c, $(addprefix src/, $(_SRC)))
 OBJ        = $(SRC:.c=.o)
 LIB_OUT    = libcrs.so
 LIB_HEADER = crs.h
-
-
+# ------------------- #
+.PHONY: all
 all: build 
 
+.PHONY: run
 run: re
 	./$(OUT)
-	
+
+.PHONY: clean
+clean: lib_clean src_clean
+
+.PHONY: fclean
+fclean: lib_fclean src_fclean lib_clean_header
+
+.PHONY: re
+re: fclean build
+
 build: lib $(OUT)
 
 $(OUT): obj_echo $(OBJ)
@@ -30,20 +40,12 @@ $(OUT): obj_echo $(OBJ)
 	@${CC} $(OBJ) -o $(OUT) ${LDFLAGS} ${LDLIBS}
 	@echo "Done!"
 
+%.o: %.c
+	@${CC} ${CFLAGS} ${CPPFLAGS} -c $< -o $@ ${LDFLAGS} ${LDLIBS}
+
 lib: crs include_dir
 	@cp lib/$(LIB_HEADER) include
 
-clean: lib_clean src_clean
-
-fclean: lib_fclean src_fclean
-
-re: fclean build
-
-obj_echo:
-	@echo "compiling object files..."
-
-%.o: %.c
-	@${CC} ${CFLAGS} ${CPPFLAGS} -c $< -o $@ ${LDFLAGS} ${LDLIBS}
 
 crs:
 	@$(MAKE) -C lib
@@ -52,18 +54,21 @@ include_dir:
 	@echo "creating include directory..."
 	@mkdir -p include
 
-lib_clean: lib_clean_header
+src_clean:
+	$(RM) $(OBJ)
+
+lib_clean:
 	@$(MAKE) -C lib clean
 
-lib_fclean: lib_clean_header
+src_fclean: src_clean
+	$(RM) $(OUT)
+
+lib_fclean:
 	@$(MAKE) -C lib fclean
 
 lib_clean_header:
 	$(RM) include/$(LIB_HEADER)
 
-src_clean:
-	$(RM) $(OBJ)
-
-src_fclean: src_clean
-	$(RM) $(OUT)
+obj_echo:
+	@echo "compiling object files..."
 # ------------------- #

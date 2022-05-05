@@ -4,11 +4,14 @@ use std::ffi::CString;
 use std::ffi::CStr;
 use std::os::raw::c_char;
 
-pub static STRSTART: Once = Once::new();
-pub static mut STRDATA:*const CString = 0 as *const CString;
+static STRSTART: Once = Once::new();
+static mut STRDATA:*const CString = 0 as *const CString;
 
-/// make string usable in C. If this is not used, 
-/// the string gets out of scope, resulting in UB
+/// It takes a pointer to a C string, and returns a pointer to a C string
+/// 
+/// Arguments:
+/// 
+/// * `a`: *const c_char - This is the string that we're going to persist.
 #[no_mangle]
 pub(crate) extern "C" fn strpersist(a: *const c_char) -> *const c_char{
     STRSTART.call_once(|| {

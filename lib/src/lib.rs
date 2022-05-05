@@ -10,7 +10,17 @@ pub extern "C" fn hello_from_rust() {
     println!("Hello from Rust!");
 }
 
-/// use this function as an example of how to create new ones
+/// `concat_strs` takes two C strings, converts them to Rust strings, concatenates them, 
+/// and returns a C string
+/// 
+/// Arguments:
+/// 
+/// * `a`: *const c_char
+/// * `b`: *const c_char
+/// 
+/// Returns:
+/// 
+/// A persistent C string
 #[no_mangle]
 pub extern "C" fn concat_strs(a: *const c_char, b: *const c_char) -> *const c_char{
     let out;
@@ -23,6 +33,16 @@ pub extern "C" fn concat_strs(a: *const c_char, b: *const c_char) -> *const c_ch
     var::strpersist(out.as_ptr())
 }
 
+/// `int_from_str` takes a pointer to a C string, converts it to a Rust string, 
+/// parses it to an integer, and returns the integer
+/// 
+/// Arguments:
+/// 
+/// * `a`: *const c_char
+/// 
+/// Returns:
+/// 
+/// A c_int
 #[no_mangle]
 pub extern "C" fn int_from_str(a: *const c_char) -> c_int{
     let a_int: c_int;

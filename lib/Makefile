@@ -8,7 +8,7 @@ all: build
 	@cp ./target/debug/$(OUT_STATIC) ./
 	@cp ./target/debug/$(OUT_DYNAMIC) ./
 	@echo "generating header file..."
-	@cbindgen > $(HEADER)
+	@cbindgen -q > $(HEADER)
 
 build:
 	@echo "compiling rust library..."
