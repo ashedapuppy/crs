@@ -1,4 +1,5 @@
 MAKE 	   = make --no-print-directory 
+
 CC         = gcc
 CFLAGS     = -Wall -Wextra -Werror -g3 -O2 -std=c99
 CPPFLAGS   = -Iinclude/
