@@ -7,7 +7,8 @@ use std::os::raw::c_char;
 static STRSTART: Once = Once::new();
 static mut STRDATA:*const CString = 0 as *const CString;
 
-/// It takes a pointer to a C string, and returns a pointer to a C string
+/// It takes a pointer to a C string, and returns a persistent pointer to a C string
+/// (which can be used from C 'safely')
 /// 
 /// Arguments:
 /// 

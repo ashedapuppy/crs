@@ -18,7 +18,7 @@ all: build
 
 build:
 	@$(call colorecho, "compiling rust library...")
-	@(cargo build)
+	@(cargo build --quiet)
 
 test: 
 	@(cargo test)
