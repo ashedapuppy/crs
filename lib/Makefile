@@ -5,7 +5,7 @@ OUT_DYNAMIC = $(OUT).so
 HEADER = crs.h
 
 define colorecho
-      @tput setaf 6
+      @tput setaf 5
       @echo $1
       @tput sgr0
 endef

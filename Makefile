@@ -18,7 +18,7 @@ LIB_OUT    = libcrs.so
 LIB_HEADER = crs.h
 
 define colorecho
-      @tput setaf 6
+      @tput setaf 5
       @echo $1
       @tput sgr0
 endef
@@ -32,9 +32,11 @@ run: re
 
 .PHONY: clean
 clean: lib_clean src_clean
+	@$(call colorecho, "cleaned")
 
 .PHONY: fclean
 fclean: lib_fclean src_fclean lib_clean_header
+	@$(call colorecho, "fully cleaned")
 
 .PHONY: re
 re: fclean build
