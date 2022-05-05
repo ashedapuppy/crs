@@ -4,14 +4,20 @@ OUT_DYNAMIC = $(OUT).so
 
 HEADER = crs.h
 
+define colorecho
+      @tput setaf 6
+      @echo $1
+      @tput sgr0
+endef
+
 all: build
 	@cp ./target/debug/$(OUT_STATIC) ./
 	@cp ./target/debug/$(OUT_DYNAMIC) ./
-	@echo "generating header file..."
+	@$(call colorecho, "generating header file...")
 	@cbindgen -q > $(HEADER)
 
 build:
-	@echo "compiling rust library..."
+	@$(call colorecho, "compiling rust library...")
 	@(cargo build)
 
 test: 
@@ -21,6 +27,6 @@ clean:
 	@(cargo clean)
 
 fclean: clean
-	$(RM) $(OUT_STATIC)
-	$(RM) $(OUT_DYNAMIC)
-	$(RM) $(HEADER)
+	@$(RM) $(OUT_STATIC)
+	@$(RM) $(OUT_DYNAMIC)
+	@$(RM) $(HEADER)

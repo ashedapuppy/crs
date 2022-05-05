@@ -16,6 +16,12 @@ SRC        = $(addsuffix .c, $(addprefix src/, $(_SRC)))
 OBJ        = $(SRC:.c=.o)
 LIB_OUT    = libcrs.so
 LIB_HEADER = crs.h
+
+define colorecho
+      @tput setaf 6
+      @echo $1
+      @tput sgr0
+endef
 # ------------------- #
 .PHONY: all
 all: build 
@@ -36,9 +42,9 @@ re: fclean build
 build: lib $(OUT)
 
 $(OUT): obj_echo $(OBJ)
-	@echo "compiling executable..."
+	@$(call colorecho, "compiling executable...")
 	@${CC} $(OBJ) -o $(OUT) ${LDFLAGS} ${LDLIBS}
-	@echo "Done!"
+	@$(call colorecho, "Done!")
 
 %.o: %.c
 	@${CC} ${CFLAGS} ${CPPFLAGS} -c $< -o $@ ${LDFLAGS} ${LDLIBS}
@@ -46,29 +52,28 @@ $(OUT): obj_echo $(OBJ)
 lib: crs include_dir
 	@cp lib/$(LIB_HEADER) include
 
-
 crs:
 	@$(MAKE) -C lib
 
 include_dir: 
-	@echo "creating include directory..."
+	@$(call colorecho, "creating include directory...")
 	@mkdir -p include
 
 src_clean:
-	$(RM) $(OBJ)
+	@$(RM) $(OBJ)
 
 lib_clean:
 	@$(MAKE) -C lib clean
 
 src_fclean: src_clean
-	$(RM) $(OUT)
+	@$(RM) $(OUT)
 
 lib_fclean:
 	@$(MAKE) -C lib fclean
 
 lib_clean_header:
-	$(RM) include/$(LIB_HEADER)
+	@$(RM) include/$(LIB_HEADER)
 
 obj_echo:
-	@echo "compiling object files..."
+	@$(call colorecho, "compiling object files...")
 # ------------------- #
