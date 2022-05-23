@@ -1,5 +1,8 @@
 use std::os::raw::c_int;
 
+mod int;
+mod str;
+
 /// This is a global variable that is used to store the error code of the last function called.
 /// 0: no error
 /// 1: Null pointer passed to rust function
@@ -26,6 +29,3 @@ where
         }
     }
 }
-
-mod str;
-mod int;
