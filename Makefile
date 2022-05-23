@@ -38,6 +38,10 @@ clean: lib_clean src_clean
 fclean: lib_fclean src_fclean lib_clean_header
 	@$(call colorecho, "fully cleaned")
 
+.PHONY: ffclean
+ffclean: lib_ffclean src_fclean lib_clean_header
+	@$(call colorecho, "fully fully cleaned")
+
 .PHONY: re
 re: fclean build
 
@@ -72,6 +76,9 @@ src_fclean: src_clean
 
 lib_fclean:
 	@$(MAKE) -C lib fclean
+
+lib_ffclean:
+	@$(MAKE) -C lib ffclean
 
 lib_clean_header:
 	@$(RM) include/$(LIB_HEADER)

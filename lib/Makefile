@@ -23,9 +23,12 @@ test:
 	@(cargo test)
 
 clean: 
-	@(cargo clean)
+	@(cargo clean -p crs)
 
 fclean: clean
 	@$(RM) $(OUT_STATIC)
 	@$(RM) $(OUT_DYNAMIC)
 	@$(RM) $(HEADER)
+
+ffclean: fclean
+	@(cargo clean)
