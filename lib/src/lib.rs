@@ -16,7 +16,7 @@ pub extern "C" fn hello_from_rust() {
     println!("Hello from Rust!");
 }
 
-pub fn safe_unwrap<T, E>(r: Result<T, E>) -> T
+pub(crate) fn safe_unwrap<T, E>(r: Result<T, E>) -> T
 where
     T: Default,
     E: std::fmt::Debug,
