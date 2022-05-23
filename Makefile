@@ -31,7 +31,7 @@ run: re
 	./$(OUT)
 
 .PHONY: clean
-clean: lib_clean src_clean
+clean: src_clean
 	@$(call colorecho, "cleaned")
 
 .PHONY: fclean
@@ -63,9 +63,6 @@ include_dir:
 
 src_clean:
 	@$(RM) $(OBJ)
-
-lib_clean:
-	@$(MAKE) -C lib clean
 
 lib_fclean:
 	@$(MAKE) -C lib fclean

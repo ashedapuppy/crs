@@ -22,10 +22,7 @@ build:
 test: 
 	@(cargo test)
 
-clean: 
-	@(cargo clean -p crs)
-
-fclean: clean
+fclean:
 	@(cargo clean)
 	@$(RM) $(OUT_STATIC)
 	@$(RM) $(OUT_DYNAMIC)
