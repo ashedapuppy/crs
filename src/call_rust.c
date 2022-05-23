@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include "crs.h"
 
-
-
 int main(void) {
+    hello_from_rust();
     char *str = concat_str("hello ", "world");
     printf("concat_strs: %s\n", str);
 
