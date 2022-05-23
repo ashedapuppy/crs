@@ -26,9 +26,7 @@ clean:
 	@(cargo clean -p crs)
 
 fclean: clean
+	@(cargo clean)
 	@$(RM) $(OUT_STATIC)
 	@$(RM) $(OUT_DYNAMIC)
 	@$(RM) $(HEADER)
-
-ffclean: fclean
-	@(cargo clean)
