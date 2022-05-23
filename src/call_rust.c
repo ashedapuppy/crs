@@ -4,7 +4,9 @@
 int main(void) {
     hello_from_rust();
     char *str = concat_str("hello ", "world");
-    printf("concat_strs: %s\n", str);
+    char *empty = concat_str("hello ", NULL);
+    printf("concat_strs: '%s'\n", str);
+    printf("string + Null concat: '%s'\n", empty);
 
     int i = int_from_str("1234");
     printf("int_from_str: %d\n", i);
