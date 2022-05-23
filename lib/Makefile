@@ -11,14 +11,13 @@ define colorecho
 endef
 
 all: build
-	@cp ./target/debug/$(OUT_STATIC) ./
-	@cp ./target/debug/$(OUT_DYNAMIC) ./
-	@$(call colorecho, "generating header file...")
-	@cbindgen -q > $(HEADER)
+	@cp ./target/release/$(OUT_STATIC) ./
+	@cp ./target/release/$(OUT_DYNAMIC) ./
+	@cp ./target/$(HEADER) ./
 
 build:
 	@$(call colorecho, "compiling rust library...")
-	@(cargo build --quiet)
+	@(cargo build --release --quiet)
 
 test: 
 	@(cargo test)
