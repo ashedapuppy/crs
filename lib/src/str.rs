@@ -1,69 +1,43 @@
-use std::ffi::CStr;
-use std::ffi::CString;
-use std::os::raw::c_char;
-use std::os::raw::c_int;
+use ::safer_ffi::prelude::*;
 
 use regex::Regex;
 
-use crate::safe_unwrap;
-use crate::CRSERR;
-
-pub(crate) fn from_cstr(a: *const c_char) -> &'static str {
-    safe_unwrap(
-        unsafe {
-            if a.is_null() {
-                CRSERR = 1;
-                return "";
-            };
-            CStr::from_ptr(a)
-        }
-        .to_str(),
-    )
+#[ffi_export]
+fn rust_free_string (string: char_p::Box) {
+    drop(string)
 }
 
-#[no_mangle]
-pub extern "C" fn len_str(s: *const c_char) -> c_int {
-    let s_safe = from_cstr(s);
-    s_safe.chars().count() as c_int
+#[ffi_export]
+fn len_str<'x>(s: char_p::Ref<'x>) -> &'x usize {
+    &s.to_str().len()
 }
 
-/// unsafe for now as to print it we have to read invalid memory
-/// todo: fix invalid read of size 8 when reading the returned string array
-#[no_mangle]
-pub extern "C" fn sep_str(s: *const c_char, separators: *const c_char) -> *mut *mut c_char {
-    let s_safe = from_cstr(s);
-    let separators_safe = from_cstr(separators);
+// #[ffi_export]
+// fn sep_str(string: char_p::Ref<'_>, separators: char_p::Ref<'_>) -> char_p::Box {
+//     let s_safe = string.to_str();
+//     let separators_safe = separators.to_str();
 
-    let mut str_vec = Vec::new();
-    let separator_re = Regex::new(format!("([{}]+)", separators_safe).as_str()).unwrap();
+//     let mut str_vec = Vec::new();
+//     let separator_re = Regex::new(format!("([{}]+)", separators_safe).as_str()).unwrap();
 
-    let split_s: Vec<&str> = separator_re.split(s_safe).into_iter().collect();
+//     let split_s: Vec<&str> = separator_re.split(s_safe).into_iter().collect();
 
-    for &i in split_s.iter() {
-        str_vec.push(safe_unwrap(CString::new(i)));
-    }
-    let mut out = str_vec
-        .into_iter()
-        .map(|s| s.into_raw())
-        .collect::<Vec<_>>();
-    out.shrink_to_fit();
-    assert_eq!(out.len(), out.capacity());
+//     for &i in split_s.iter() {
+//         str_vec.push(i.to_owned());
+//     }
+//     str_vec.try_into().unwrap()
+// }
 
-    let ptr = out.as_mut_ptr();
-    std::mem::forget(out);
-    ptr
+#[ffi_export]
+fn cmp_str(a: char_p::Ref<'_>, b: char_p::Ref<'_>) -> i32 {
+    let a_safe = a.to_str();
+    let b_safe = b.to_str();
+
+    (a_safe == b_safe) as i32
 }
 
-#[no_mangle]
-pub extern "C" fn cmp_str(a: *const c_char, b: *const c_char) -> c_int {
-    let a_safe = from_cstr(a);
-    let b_safe = from_cstr(b);
-
-    (a_safe == b_safe) as c_int
-}
-
-#[no_mangle]
-pub extern "C" fn dup_str(s: *const c_char) -> *mut c_char {
+#[ffi_export]
+fn dup_str(s: *const c_char) -> *mut c_char {
     let s_safe = from_cstr(s);
     let out = CString::new(s_safe);
     safe_unwrap(out).into_raw()
@@ -76,12 +50,4 @@ pub extern "C" fn concat_str(a: *const c_char, b: *const c_char) -> *mut c_char 
 
     let out = CString::new([a_safe, b_safe].join(""));
     safe_unwrap(out).into_raw()
-}
-
-#[no_mangle]
-pub extern "C" fn free_str(s: *mut c_char) {
-    unsafe {
-        assert!(!s.is_null());
-        CString::from_raw(s)
-    };
 }

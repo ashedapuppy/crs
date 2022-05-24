@@ -4,3 +4,6 @@ language = "C"
 includes = []
 sys_includes = []
 no_includes = true   
+documentation_style = "doxy"
+style = "type"
+usize_is_size_t = true
