@@ -2,7 +2,7 @@
 name = "crs"
 version = "0.1.0"
 edition = "2021"
-build = "build.rs"
+# build = "build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -10,7 +10,13 @@ build = "build.rs"
 crate-type = ["staticlib", "cdylib"]
 
 [dependencies]
+lazy_static = {version = "1.4.0", default-features = false }
 regex = "1.5.6"
+safer-ffi = { version = "0.0.10", features = ["proc_macros"] }
 
-[build-dependencies]
-cbindgen = "0.23.0"
+[features]
+c-headers = ["safer-ffi/headers"]
+
+# [build-dependencies]
+# cbindgen = { version = "0.23.0", default-features = false}
+
