@@ -13,11 +13,11 @@ endef
 all: build
 	@cp ./target/release/$(OUT_STATIC) ./
 	@cp ./target/release/$(OUT_DYNAMIC) ./
-	@cp ./target/$(HEADER) ./
 
 build:
 	@$(call colorecho, "compiling rust library...")
 	@(cargo build --release --quiet)
+	@(cargo test --quiet --features c-headers -- generate_headers --nocapture)
 
 test: 
 	@(cargo test)
