@@ -8,7 +8,8 @@ int main(void) {
     printf("concat_strs: '%s'\n", str);
 
     char intstr[] = "-1234,+123-456+123123123-12,13";
-    printf("strdup: %s\n", dup_str(intstr));
+    char *cp = dup_str(intstr);
+    printf("strdup: %s\n", cp);
 
     int i = int_from_str(intstr);
     printf("int_from_str: %d\n", i);
@@ -28,6 +29,7 @@ int main(void) {
     printf("cmp result: (%s == hello world) %d\n", str, cmp_str(str, "hello world"));
 
     rust_free_string(str);
+    rust_free_string(cp);
     rust_free_string_array(slice);
     rust_free_int_array(ints);
     return 0;
