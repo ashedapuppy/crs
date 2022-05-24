@@ -9,7 +9,7 @@ int main(void) {
     printf("concat_strs: '%s'\n", str);
     printf("string + Null concat: '%s'\n", empty);
 
-    char intstr[] = "-1234,+123-456";
+    char intstr[] = "-1234,+123-456+123123123";
 
     int i = int_from_str(intstr);
     printf("int_from_str: %d\n", i);
@@ -19,7 +19,7 @@ int main(void) {
         printf("i[%d] = %d\n", i, is[i]);
     }
 
-    printf("cmp result: (%s == hello world) %d\n", str, cmp_str(str, "hello world"));
+    printf("cmp result: (%s == hello world) %d\n", str, eq_str(str, "hello world"));
 
     char **sepstr = sep_str("hello,world", ",");
 

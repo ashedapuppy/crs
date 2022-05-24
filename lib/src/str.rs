@@ -27,8 +27,6 @@ pub extern "C" fn len_str(s: *const c_char) -> c_int {
     s_safe.chars().count() as c_int
 }
 
-/// unsafe for now as to print it we have to read invalid memory
-/// todo: fix invalid read of size 8 when reading the returned string array
 #[no_mangle]
 pub extern "C" fn sep_str(s: *const c_char, separators: *const c_char) -> *mut *mut c_char {
     let s_safe = from_cstr(s);
@@ -46,6 +44,7 @@ pub extern "C" fn sep_str(s: *const c_char, separators: *const c_char) -> *mut *
         .into_iter()
         .map(|s| s.into_raw())
         .collect::<Vec<_>>();
+    out.push(std::ptr::null_mut());
     out.shrink_to_fit();
     assert_eq!(out.len(), out.capacity());
 
@@ -55,7 +54,7 @@ pub extern "C" fn sep_str(s: *const c_char, separators: *const c_char) -> *mut *
 }
 
 #[no_mangle]
-pub extern "C" fn cmp_str(a: *const c_char, b: *const c_char) -> c_int {
+pub extern "C" fn eq_str(a: *const c_char, b: *const c_char) -> c_int {
     let a_safe = from_cstr(a);
     let b_safe = from_cstr(b);
 
