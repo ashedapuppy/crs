@@ -4,6 +4,7 @@ mod int;
 mod str;
 
 /// This is a global variable that is used to store the error code of the last function called.
+/// -1: result not found
 /// 0: no error
 /// 1: Null pointer passed to rust function
 /// 2: unwrap failed (called unwrap on Err value)

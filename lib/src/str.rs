@@ -3,6 +3,8 @@ use std::ffi::CString;
 use std::os::raw::c_char;
 use std::os::raw::c_int;
 
+use regex::Regex;
+
 use crate::safe_unwrap;
 use crate::CRSERR;
 
@@ -23,6 +25,33 @@ pub(crate) fn from_cstr(a: *const c_char) -> &'static str {
 pub extern "C" fn len_str(s: *const c_char) -> c_int {
     let s_safe = from_cstr(s);
     s_safe.chars().count() as c_int
+}
+
+/// unsafe for now as to print it we have to read invalid memory
+/// todo: fix invalid read of size 8 when reading the returned string array
+#[no_mangle]
+pub extern "C" fn sep_str(s: *const c_char, separators: *const c_char) -> *mut *mut c_char {
+    let s_safe = from_cstr(s);
+    let separators_safe = from_cstr(separators);
+
+    let mut str_vec = Vec::new();
+    let separator_re = Regex::new(format!("([{}]+)", separators_safe).as_str()).unwrap();
+
+    let split_s: Vec<&str> = separator_re.split(s_safe).into_iter().collect();
+
+    for &i in split_s.iter() {
+        str_vec.push(safe_unwrap(CString::new(i)));
+    }
+    let mut out = str_vec
+        .into_iter()
+        .map(|s| s.into_raw())
+        .collect::<Vec<_>>();
+    out.shrink_to_fit();
+    assert_eq!(out.len(), out.capacity());
+
+    let ptr = out.as_mut_ptr();
+    std::mem::forget(out);
+    ptr
 }
 
 #[no_mangle]
