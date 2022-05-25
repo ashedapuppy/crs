@@ -17,7 +17,7 @@ all: build
 build:
 	@$(call colorecho, "compiling rust library...")
 	@(cargo build --release --quiet)
-	@(cargo test --quiet --features c-headers -- generate_headers --nocapture)
+	@(cargo test --quiet --features c-headers -- generate_headers --nocapture > /dev/null 2>&1)
 
 test: 
 	@(cargo test)

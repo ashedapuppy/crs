@@ -11,6 +11,7 @@ fn generate_headers() -> ::std::io::Result<()> {
         .generate()
 }
 
+/// `#[ffi_export]` is a Rust attribute that tells the Rust compiler to export the function to the C ABI
 #[ffi_export]
 fn hello_from_rust() {
     println!("Hello from Rust!");
