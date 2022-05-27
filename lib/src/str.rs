@@ -6,16 +6,6 @@ use ::safer_ffi::prelude::*;
 use regex::Regex;
 use safer_ffi::{char_p::char_p_boxed, slice::slice_boxed, slice::slice_ref};
 
-/// `rust_free_string` is a function that takes a `char_p_boxed` and drops it
-///
-/// Arguments:
-///
-/// * `string`: char_p_boxed - This is the string that we want to free.
-#[ffi_export]
-fn free_str(string: char_p_boxed) {
-    drop(string)
-}
-
 /// `rust_free_string_array` is a function that takes a `slice::Box<char_p_boxed>` and drops it
 ///
 /// Arguments:
@@ -76,16 +66,6 @@ fn len_str(s: char_p::Ref<'_>) -> usize {
     s.to_str().len()
 }
 
-macro_rules! unwrap_or_none {
-    ( $e:expr ) => {
-        match $e {
-            Ok(x) => x,
-            Err(_) => return None,
-        }
-    };
-}
-pub(crate) use unwrap_or_none;
-
 /// `sep_str` takes a string and a string of separators, and returns a slice of strings,
 /// each of which is a substring of the original string
 /// if no string can be found with the separators, len == 1
@@ -99,25 +79,30 @@ pub(crate) use unwrap_or_none;
 ///
 /// A slice of char_p_boxed
 #[ffi_export]
-fn split_str(s: char_p::Ref<'_>, separators: char_p::Ref<'_>) -> slice_boxed<char_p_boxed> {
+fn split_str(s: char_p::Ref<'_>, separators: char_p::Ref<'_>) -> 
+    slice_boxed<char_p_boxed> 
+{
     let s_safe = s.to_str();
     let separators_safe = separators.to_str();
-    let out: Box<[char_p_boxed]> = Box::new([char_p::new(String::new())]);
+    // empty string array to be filled and returned
+    let mut out: Box<[char_p_boxed]> = Box::new([char_p::new(String::new())]);
 
-    let mut str_vec: Vec<&str> = Vec::new();
-    if separators_safe.is_empty() {
-        return out.try_into().unwrap();
+    if separators_safe.is_empty() || s_safe.is_empty() {
+        return out.into();
     }
     let separator_re =
-        Regex::new(format!("([{}]+)", separators_safe).as_str()).expect("could not build regex");
+        Regex::new(format!("[{}]+", separators_safe).as_str())
+        .expect("could not build regex");
 
-    let split_s: Vec<&str> = separator_re.split(s_safe).into_iter().collect();
-
-    for &i in split_s.iter() {
-        str_vec.push(i);
+    // take all the separated tokens found with the regex and add them to a string vector
+    let mut str_vec: Vec<&str> = Vec::new();
+    for token in separator_re.split(s_safe).into_iter() {
+        str_vec.push(token);
     }
-    let out: Box<[char_p_boxed]> = str_vec.iter().map(|s| char_p::new(s.to_owned())).collect();
-    out.try_into().unwrap()
+
+    // convert the string vector to the correct return type
+    out = str_vec.iter().map(|s| char_p::new(s.to_owned())).collect();
+    out.into()
 }
 
 #[ffi_export]
@@ -132,7 +117,11 @@ fn cmp_str(a: char_p::Ref<'_>, b: char_p::Ref<'_>) -> i32 {
 /// * `s`: char_p::Ref<'_>
 #[ffi_export]
 fn new_str(s: char_p::Ref<'_>) -> char_p_boxed {
-    s.to_string().try_into().unwrap()
+    let s_safe = s.to_str();
+    if s_safe.is_empty() {
+        return char_p::new(String::new());
+    }
+    char_p::new(String::from(s_safe))
 }
 
 /// `concat_str` takes two strings, concatenates them, and returns the result
@@ -145,7 +134,8 @@ fn new_str(s: char_p::Ref<'_>) -> char_p_boxed {
 fn concat_str(a: char_p::Ref<'_>, b: char_p::Ref<'_>) -> char_p_boxed {
     let a_safe = a.to_str();
     let b_safe = b.to_str();
-
-    let out = [a_safe, b_safe].join("");
-    out.try_into().unwrap()
+    if a_safe.is_empty() || b_safe.is_empty() {
+        return char_p::new(String::new());
+    }
+    char_p::new([a_safe, b_safe].join(""))
 }
