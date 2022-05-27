@@ -3,7 +3,6 @@
 #include "crs.h"
 
 void test_rust_lib(void) {
-    // hello_from_rust();
     char *str = concat_str("hello ", "world");
     if (str != NULL) {
         printf("concat_strs: '%s'\n", str);
@@ -53,6 +52,10 @@ void test_rust_lib(void) {
 int main(int argc, char **argv) {
     (void)argc; // cast to void to mark as unused
     (void)argv;
-    test_rust_lib();
+    // test_rust_lib();
+
+    char *str = new_str_empty();
+    push_str(str, 'a');
+    printf("%s", str);
     return 0;
 }

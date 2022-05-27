@@ -71,3 +71,8 @@ include/crs.h
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+compile_commands.json
+GPATH
+GRTAGS
+GTAGS
