@@ -2,8 +2,8 @@
 #![allow(unused_imports)]
 
 use ::safer_ffi::prelude::*;
-use safer_ffi::{char_p::char_p_boxed, slice::slice_boxed, slice::slice_ref};
 use regex::Regex;
+use safer_ffi::{char_p::char_p_boxed, slice::slice_boxed, slice::slice_ref};
 
 /// `rust_free_string_array` is a function that takes a `slice::Box<char_p_boxed>` and drops it
 ///
@@ -73,9 +73,7 @@ fn len_str(s: char_p::Ref<'_>) -> usize {
 ///
 /// A slice of char_p_boxed
 #[ffi_export]
-fn split_str(s: char_p::Ref<'_>, separators: char_p::Ref<'_>) -> 
-    slice_boxed<char_p_boxed> 
-{
+fn split_str(s: char_p::Ref<'_>, separators: char_p::Ref<'_>) -> slice_boxed<char_p_boxed> {
     let s_safe = s.to_str();
     let separators_safe = separators.to_str();
     // empty string array to be filled and returned
@@ -85,8 +83,7 @@ fn split_str(s: char_p::Ref<'_>, separators: char_p::Ref<'_>) ->
         return out.into();
     }
     let separator_re =
-        Regex::new(format!("[{}]+", separators_safe).as_str())
-        .expect("could not build regex");
+        Regex::new(format!("[{}]+", separators_safe).as_str()).expect("could not build regex");
 
     // take all the separated tokens found with the regex and add them to a string vector
     let mut str_vec: Vec<&str> = Vec::new();
@@ -101,14 +98,14 @@ fn split_str(s: char_p::Ref<'_>, separators: char_p::Ref<'_>) ->
 
 /// `cmp_str` takes two `char_p`s, converts them to Rust strings, and compares them character by
 /// character
-/// 
+///
 /// Arguments:
-/// 
+///
 /// * `a`: char_p::Ref<'_> - This is a pointer to a C string.
 /// * `b`: char_p::Ref<'_>
-/// 
+///
 /// Returns:
-/// 
+///
 /// The difference between the first two characters that are different.
 #[ffi_export]
 fn cmp_str(a: char_p::Ref<'_>, b: char_p::Ref<'_>) -> isize {
@@ -163,14 +160,19 @@ mod tests {
 
     use super::*;
     use ::safer_ffi::prelude::*;
-    use safer_ffi::{char_p::{char_p_boxed, char_p_ref}, slice::slice_boxed, slice::slice_ref};
+    use safer_ffi::{
+        char_p::{char_p_boxed, char_p_ref},
+        slice::slice_boxed,
+        slice::slice_ref,
+    };
     #[test]
     fn test_concat() {
         let a = CString::new("hello").unwrap();
         let b = CString::new("world").unwrap();
         let c = concat_str(
-            char_p_ref::from(a.as_c_str()), 
-            char_p_ref::from(b.as_c_str()));
+            char_p_ref::from(a.as_c_str()),
+            char_p_ref::from(b.as_c_str()),
+        );
         assert_eq!(c.to_str(), "helloworld");
     }
 
@@ -186,8 +188,9 @@ mod tests {
         let a = CString::new("helloo").unwrap();
         let b = CString::new("helloo").unwrap();
         let c = cmp_str(
-            char_p_ref::from(a.as_c_str()), 
-            char_p_ref::from(b.as_c_str()));
+            char_p_ref::from(a.as_c_str()),
+            char_p_ref::from(b.as_c_str()),
+        );
         assert_eq!(c, 0);
     }
 
@@ -196,14 +199,15 @@ mod tests {
         let a = CString::new("hello,world !").unwrap();
         let b = CString::new(", ").unwrap();
         let c = split_str(
-            char_p_ref::from(a.as_c_str()), 
-            char_p_ref::from(b.as_c_str()));
+            char_p_ref::from(a.as_c_str()),
+            char_p_ref::from(b.as_c_str()),
+        );
         assert_eq!(c.len(), 3);
         assert_eq!(c[0].to_str(), "hello");
         assert_eq!(c[1].to_str(), "world");
         assert_eq!(c[2].to_str(), "!");
     }
-    
+
     #[test]
     fn test_len_str() {
         let a = CString::new("hello").unwrap();
@@ -214,34 +218,28 @@ mod tests {
     #[test]
     fn test_push_str() {
         let a = CString::new("hello").unwrap();
-        let b = push_str(
-            char_p_ref::from(a.as_c_str()), 
-            '!' as u8);
+        let b = push_str(char_p_ref::from(a.as_c_str()), '!' as u8);
         assert_eq!(b.to_str(), "hello!");
     }
 
     #[test]
     fn test_pop_str() {
         let a = CString::new("hello!").unwrap();
-        let b = pop_str(
-            char_p_ref::from(a.as_c_str()),
-            1);
+        let b = pop_str(char_p_ref::from(a.as_c_str()), 1);
         assert_eq!(b.to_str(), "hello");
     }
 
     #[test]
     fn test_lwr_str() {
         let a = CString::new("HELLO!").unwrap();
-        let b = lwr_str(
-            char_p_ref::from(a.as_c_str()));
+        let b = lwr_str(char_p_ref::from(a.as_c_str()));
         assert_eq!(b.to_str(), "hello!");
     }
 
     #[test]
     fn test_uppr_str() {
         let a = CString::new("hello!").unwrap();
-        let b = uppr_str(
-            char_p_ref::from(a.as_c_str()));
+        let b = uppr_str(char_p_ref::from(a.as_c_str()));
         assert_eq!(b.to_str(), "HELLO!");
     }
 
