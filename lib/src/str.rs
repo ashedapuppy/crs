@@ -161,14 +161,14 @@ fn concat_str(a: char_p::Ref<'_>, b: char_p::Ref<'_>) -> char_p_boxed {
 mod tests {
     use std::ffi::{CStr, CString};
 
-    use crate::*;
+    use super::*;
     use ::safer_ffi::prelude::*;
     use safer_ffi::{char_p::{char_p_boxed, char_p_ref}, slice::slice_boxed, slice::slice_ref};
     #[test]
     fn test_concat() {
         let a = CString::new("hello").unwrap();
         let b = CString::new("world").unwrap();
-        let c = crate::str::concat_str(
+        let c = concat_str(
             char_p_ref::from(a.as_c_str()), 
             char_p_ref::from(b.as_c_str()));
         assert_eq!(c.to_str(), "helloworld");
@@ -177,7 +177,7 @@ mod tests {
     #[test]
     fn test_new_string() {
         let a = CString::new("hello").unwrap();
-        let b = crate::str::new_str(char_p_ref::from(a.as_c_str()));
+        let b = new_str(char_p_ref::from(a.as_c_str()));
         assert_eq!(b.to_str(), "hello");
     }
 
@@ -185,7 +185,7 @@ mod tests {
     fn test_cmp_str() {
         let a = CString::new("helloo").unwrap();
         let b = CString::new("helloo").unwrap();
-        let c = crate::str::cmp_str(
+        let c = cmp_str(
             char_p_ref::from(a.as_c_str()), 
             char_p_ref::from(b.as_c_str()));
         assert_eq!(c, 0);
@@ -195,7 +195,7 @@ mod tests {
     fn test_split_str() {
         let a = CString::new("hello,world !").unwrap();
         let b = CString::new(", ").unwrap();
-        let c = crate::str::split_str(
+        let c = split_str(
             char_p_ref::from(a.as_c_str()), 
             char_p_ref::from(b.as_c_str()));
         assert_eq!(c.len(), 3);
@@ -207,14 +207,14 @@ mod tests {
     #[test]
     fn test_len_str() {
         let a = CString::new("hello").unwrap();
-        let b = crate::str::len_str(char_p_ref::from(a.as_c_str()));
+        let b = len_str(char_p_ref::from(a.as_c_str()));
         assert_eq!(b, 5);
     }
 
     #[test]
     fn test_push_str() {
         let a = CString::new("hello").unwrap();
-        let b = crate::str::push_str(
+        let b = push_str(
             char_p_ref::from(a.as_c_str()), 
             '!' as u8);
         assert_eq!(b.to_str(), "hello!");
@@ -223,7 +223,7 @@ mod tests {
     #[test]
     fn test_pop_str() {
         let a = CString::new("hello!").unwrap();
-        let b = crate::str::pop_str(
+        let b = pop_str(
             char_p_ref::from(a.as_c_str()),
             1);
         assert_eq!(b.to_str(), "hello");
@@ -232,7 +232,7 @@ mod tests {
     #[test]
     fn test_lwr_str() {
         let a = CString::new("HELLO!").unwrap();
-        let b = crate::str::lwr_str(
+        let b = lwr_str(
             char_p_ref::from(a.as_c_str()));
         assert_eq!(b.to_str(), "hello!");
     }
@@ -240,14 +240,14 @@ mod tests {
     #[test]
     fn test_uppr_str() {
         let a = CString::new("hello!").unwrap();
-        let b = crate::str::uppr_str(
+        let b = uppr_str(
             char_p_ref::from(a.as_c_str()));
         assert_eq!(b.to_str(), "HELLO!");
     }
 
     #[test]
     fn test_new_str_empty() {
-        let b = crate::str::new_str_empty();
+        let b = new_str_empty();
         assert_eq!(b.to_str(), "");
     }
 }
