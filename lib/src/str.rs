@@ -2,9 +2,8 @@
 #![allow(unused_imports)]
 
 use ::safer_ffi::prelude::*;
-
-use regex::Regex;
 use safer_ffi::{char_p::char_p_boxed, slice::slice_boxed, slice::slice_ref};
+use regex::Regex;
 
 /// `rust_free_string_array` is a function that takes a `slice::Box<char_p_boxed>` and drops it
 ///
@@ -14,11 +13,6 @@ use safer_ffi::{char_p::char_p_boxed, slice::slice_boxed, slice::slice_ref};
 #[ffi_export]
 fn free_str_arr(arr: slice_boxed<char_p_boxed>) {
     drop(arr)
-}
-
-#[ffi_export]
-fn new_str_len(len: i32) -> char_p_boxed {
-    char_p::new(String::with_capacity(len as usize))
 }
 
 #[ffi_export]
@@ -105,9 +99,32 @@ fn split_str(s: char_p::Ref<'_>, separators: char_p::Ref<'_>) ->
     out.into()
 }
 
+/// `cmp_str` takes two `char_p`s, converts them to Rust strings, and compares them character by
+/// character
+/// 
+/// Arguments:
+/// 
+/// * `a`: char_p::Ref<'_> - This is a pointer to a C string.
+/// * `b`: char_p::Ref<'_>
+/// 
+/// Returns:
+/// 
+/// The difference between the first two characters that are different.
 #[ffi_export]
-fn cmp_str(a: char_p::Ref<'_>, b: char_p::Ref<'_>) -> i32 {
-    a.to_str().len() as i32 - b.to_str().len() as i32
+fn cmp_str(a: char_p::Ref<'_>, b: char_p::Ref<'_>) -> isize {
+    let a_safe = a.to_str();
+    let b_safe = b.to_str();
+
+    for (i, c) in a_safe.chars().enumerate() {
+        if let Some(c2) = b_safe.chars().nth(i) {
+            if c != c2 {
+                return c as isize - c2 as isize;
+            }
+        } else {
+            return c as isize;
+        }
+    }
+    0
 }
 
 /// `new_str` takes a `char*` and returns a `char*` that is a duplicate of the input
@@ -138,4 +155,99 @@ fn concat_str(a: char_p::Ref<'_>, b: char_p::Ref<'_>) -> char_p_boxed {
         return char_p::new(String::new());
     }
     char_p::new([a_safe, b_safe].join(""))
+}
+
+#[cfg(test)]
+mod tests {
+    use std::ffi::{CStr, CString};
+
+    use crate::*;
+    use ::safer_ffi::prelude::*;
+    use safer_ffi::{char_p::{char_p_boxed, char_p_ref}, slice::slice_boxed, slice::slice_ref};
+    #[test]
+    fn test_concat() {
+        let a = CString::new("hello").unwrap();
+        let b = CString::new("world").unwrap();
+        let c = crate::str::concat_str(
+            char_p_ref::from(a.as_c_str()), 
+            char_p_ref::from(b.as_c_str()));
+        assert_eq!(c.to_str(), "helloworld");
+    }
+
+    #[test]
+    fn test_new_string() {
+        let a = CString::new("hello").unwrap();
+        let b = crate::str::new_str(char_p_ref::from(a.as_c_str()));
+        assert_eq!(b.to_str(), "hello");
+    }
+
+    #[test]
+    fn test_cmp_str() {
+        let a = CString::new("helloo").unwrap();
+        let b = CString::new("helloo").unwrap();
+        let c = crate::str::cmp_str(
+            char_p_ref::from(a.as_c_str()), 
+            char_p_ref::from(b.as_c_str()));
+        assert_eq!(c, 0);
+    }
+
+    #[test]
+    fn test_split_str() {
+        let a = CString::new("hello,world !").unwrap();
+        let b = CString::new(", ").unwrap();
+        let c = crate::str::split_str(
+            char_p_ref::from(a.as_c_str()), 
+            char_p_ref::from(b.as_c_str()));
+        assert_eq!(c.len(), 3);
+        assert_eq!(c[0].to_str(), "hello");
+        assert_eq!(c[1].to_str(), "world");
+        assert_eq!(c[2].to_str(), "!");
+    }
+    
+    #[test]
+    fn test_len_str() {
+        let a = CString::new("hello").unwrap();
+        let b = crate::str::len_str(char_p_ref::from(a.as_c_str()));
+        assert_eq!(b, 5);
+    }
+
+    #[test]
+    fn test_push_str() {
+        let a = CString::new("hello").unwrap();
+        let b = crate::str::push_str(
+            char_p_ref::from(a.as_c_str()), 
+            '!' as u8);
+        assert_eq!(b.to_str(), "hello!");
+    }
+
+    #[test]
+    fn test_pop_str() {
+        let a = CString::new("hello!").unwrap();
+        let b = crate::str::pop_str(
+            char_p_ref::from(a.as_c_str()),
+            1);
+        assert_eq!(b.to_str(), "hello");
+    }
+
+    #[test]
+    fn test_lwr_str() {
+        let a = CString::new("HELLO!").unwrap();
+        let b = crate::str::lwr_str(
+            char_p_ref::from(a.as_c_str()));
+        assert_eq!(b.to_str(), "hello!");
+    }
+
+    #[test]
+    fn test_uppr_str() {
+        let a = CString::new("hello!").unwrap();
+        let b = crate::str::uppr_str(
+            char_p_ref::from(a.as_c_str()));
+        assert_eq!(b.to_str(), "HELLO!");
+    }
+
+    #[test]
+    fn test_new_str_empty() {
+        let b = crate::str::new_str_empty();
+        assert_eq!(b.to_str(), "");
+    }
 }
