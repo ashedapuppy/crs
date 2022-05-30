@@ -54,8 +54,10 @@ int main(int argc, char **argv) {
     (void)argv;
     // test_rust_lib();
 
-    char *str = new_str_empty();
-    push_str(str, 'a');
-    printf("%s", str);
+    Vector_t u = new_vec(1, 2, 3);
+    Vector_t v = new_vec(1, 2, 3);
+    printf("u: %s\nv: %s\n\n", fmt_vec(u), fmt_vec(v));
+    add_vec(&u, v);
+    printf("u: %s\nv: %s\n\n", fmt_vec(u), fmt_vec(v));
     return 0;
 }
