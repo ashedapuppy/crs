@@ -55,16 +55,11 @@ int main(int argc, char **argv) {
     test_rust_lib();
 
     Vector_t u = new_vec(1, 2, 3);
-    Vector_t v = new_vec(1, 2, 3);
     char *u_fmt = fmt_vec(u);
-    char *v_fmt = fmt_vec(v);
-    printf("u: %s\nv: %s\n\n", u_fmt, v_fmt);
-    add_vec(&u, v);
-    fmt_vec_ow(&u_fmt, u);
-    printf("u: %s\nv: %s\n\n", u_fmt, v_fmt);
+    printf("u: %s\n\n", u_fmt);
+    fmt_vec_ow(&u_fmt, *normalise_vec(&u));
+    printf("u: %s\n\n", u_fmt);
     free_vec(u);
-    free_vec(v);
     free(u_fmt);
-    free(v_fmt);
     return 0;
 }

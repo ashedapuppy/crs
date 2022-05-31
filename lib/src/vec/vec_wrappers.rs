@@ -1,11 +1,9 @@
 use ::safer_ffi::prelude::*;
-use fast_inv_sqrt::InvSqrt64;
 use safer_ffi::char_p::*;
 use std::ffi::CString;
 
-use crate::vec::CrossProduct;
-use crate::vec::DotProduct;
-use crate::vec::Vector;
+use super::Vector;
+use super::VectorMath;
 
 #[ffi_export]
 fn free_vec(v: Vector) {
@@ -115,39 +113,42 @@ fn crossprod_vec<'x>(u: &'x mut Vector, v: Vector) -> &'x mut Vector {
 }
 
 #[ffi_export]
-fn crossprod_vec_new(u: &'_ mut Vector, v: Vector) -> Vector {
+fn crossprod_vec_new(u: &'_ Vector, v: Vector) -> Vector {
     u.cross_product(&v)
 }
 
 #[ffi_export]
 fn magnitude_vec(u: &'_ Vector) -> f64 {
-    f64::sqrt(u.dot_product(u))
+    u.magnitude()
 }
 
 #[ffi_export]
 fn normalise_vec<'x>(u: &'x mut Vector) -> &'x mut Vector {
-    *u = *u / magnitude_vec(u);
+    *u = u.normalise();
     u
 }
 
 #[ffi_export]
-fn normalise_vec_new(u: &'_ mut Vector) -> Vector {
-    *u / magnitude_vec(u)
+fn normalise_vec_new(u: &'_ Vector) -> Vector {
+    u.normalise()
 }
 
 #[ffi_export]
 fn fast_normalise_vec<'x>(u: &'x mut Vector) -> &'x mut Vector {
-    // uses the quake fast inverse square root approximation using newton's method,
+    // uses the quake fast inverse square root approximation (newton's method)
     // not garanteed to be faster on modern cpus but could be useful in some cases
-    *u = *u * (u.dot_product_self()).inv_sqrt64();
+    *u = u.fast_normalise();
     u
 }
 
 #[ffi_export]
 fn fast_normalise_vec_new(u: &'_ mut Vector) -> Vector {
-    // uses the quake fast inverse square root approximation using newton's method,
-    // not garanteed to be faster on modern cpus but could be useful in some cases
-    *u * (u.dot_product_self()).inv_sqrt64()
+    u.fast_normalise()
+}
+
+#[ffi_export]
+fn angle(u: &'_ Vector, v: &'_ Vector) -> f64 {
+    u.angle(&v)
 }
 
 #[cfg(test)]
@@ -177,5 +178,16 @@ mod tests {
         let mut u_cp = dup_vec(u);
         assert_eq!(*normalise_vec(&mut u), u_norm);
         println!("quake_normalised: {}", fast_normalise_vec(&mut u_cp));
+
+        let x = new_vec(3.0, 6.0, 1.0);
+        let y = new_vec(-5.0, -9.0, 4.0);
+        println!(r#"angle : {}
+||x|| = {}
+||y|| = {}
+x o y = {}
+x̂ = {}
+ŷ = {}"#, 
+        x.angle(&y), x.magnitude(), y.magnitude(), x.dot_product(&y), x.normalise(), y.normalise());
+
     }
 }

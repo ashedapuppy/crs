@@ -4,16 +4,21 @@ use std::{
 };
 
 use ::safer_ffi::prelude::*;
+use fast_inv_sqrt::InvSqrt64;
 
 mod vec_simple_ops;
 
-trait DotProduct {
+pub trait VectorMath {
     fn dot_product(&self, other: &Self) -> f64;
     fn dot_product_self(&self) -> f64;
-}
-
-trait CrossProduct {
     fn cross_product(&self, other: &Self) -> Self;
+    fn magnitude(&self) -> f64;
+    fn normalise(&self) -> Self;
+    fn fast_normalise(&self) -> Self;
+    fn angle(&self, other: &Self) -> f64;
+    fn i() -> Self;
+    fn j() -> Self;
+    fn k() -> Self;
 }
 
 #[derive_ReprC]
@@ -71,26 +76,6 @@ impl Sub for Vector {
     }
 }
 
-impl DotProduct for Vector {
-    fn dot_product(&self, other: &Self) -> f64 {
-        self.x * other.x + self.y * other.y + self.z * other.z
-    }
-
-    fn dot_product_self(&self) -> f64 {
-        self.x * self.x + self.y * self.y + self.z * self.z
-    }
-}
-
-impl CrossProduct for Vector {
-    fn cross_product(&self, other: &Self) -> Self {
-        Vector {
-            x: self.y * other.z - self.z * other.y,
-            y: self.z * other.x - self.x * other.z,
-            z: self.x * other.y - self.y * other.x,
-        }
-    }
-}
-
 impl Mul<f64> for Vector {
     type Output = Vector;
 
@@ -112,5 +97,55 @@ impl Div<f64> for Vector {
             y: self.y / other,
             z: self.z / other,
         }
+    }
+}
+
+impl VectorMath for Vector {
+    fn dot_product(&self, other: &Self) -> f64 {
+        self.x * other.x + self.y * other.y + self.z * other.z
+    }
+
+    fn dot_product_self(&self) -> f64 {
+        self.x * self.x + self.y * self.y + self.z * self.z
+    }
+
+    fn cross_product(&self, other: &Self) -> Self {
+        Vector {
+            x: self.y * other.z - self.z * other.y,
+            y: self.z * other.x - self.x * other.z,
+            z: self.x * other.y - self.y * other.x,
+        }
+    }
+
+    fn magnitude(&self) -> f64 {
+        f64::sqrt(self.dot_product_self())
+    }
+
+    fn normalise(&self) -> Self {
+        *self / self.magnitude()
+    }
+
+    fn fast_normalise(&self) -> Self {
+        *self * (self.dot_product_self()).inv_sqrt64()
+    }
+
+    fn angle(&self, other: &Self) -> f64 {
+        self
+        .dot_product(other)
+        .div(self.magnitude() * other.magnitude())
+        .acos()
+        .to_degrees()
+    }
+
+    fn i() -> Self {
+        Vector { x: 1.0, y: 0.0, z: 0.0 }
+    }
+
+    fn j() -> Self {
+        Vector { x: 0.0, y: 1.0, z: 0.0 }
+    }
+
+    fn k() -> Self {
+        Vector { x: 0.0, y: 0.0, z: 1.0 }
     }
 }
