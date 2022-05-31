@@ -52,12 +52,19 @@ void test_rust_lib(void) {
 int main(int argc, char **argv) {
     (void)argc; // cast to void to mark as unused
     (void)argv;
-    // test_rust_lib();
+    test_rust_lib();
 
     Vector_t u = new_vec(1, 2, 3);
     Vector_t v = new_vec(1, 2, 3);
-    printf("u: %s\nv: %s\n\n", fmt_vec(u), fmt_vec(v));
+    char *u_fmt = fmt_vec(u);
+    char *v_fmt = fmt_vec(v);
+    printf("u: %s\nv: %s\n\n", u_fmt, v_fmt);
     add_vec(&u, v);
-    printf("u: %s\nv: %s\n\n", fmt_vec(u), fmt_vec(v));
+    fmt_vec_ow(&u_fmt, u);
+    printf("u: %s\nv: %s\n\n", u_fmt, v_fmt);
+    free_vec(u);
+    free_vec(v);
+    free(u_fmt);
+    free(v_fmt);
     return 0;
 }

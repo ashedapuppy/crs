@@ -108,17 +108,17 @@ fn split_str(s: char_p::Ref<'_>, separators: char_p::Ref<'_>) -> slice_boxed<cha
 ///
 /// The difference between the first two characters that are different.
 #[ffi_export]
-fn cmp_str(a: char_p::Ref<'_>, b: char_p::Ref<'_>) -> isize {
+fn cmp_str(a: char_p::Ref<'_>, b: char_p::Ref<'_>) -> i32 {
     let a_safe = a.to_str();
     let b_safe = b.to_str();
 
     for (i, c) in a_safe.chars().enumerate() {
         if let Some(c2) = b_safe.chars().nth(i) {
             if c != c2 {
-                return c as isize - c2 as isize;
+                return c as i32 - c2 as i32;
             }
         } else {
-            return c as isize;
+            return c as i32;
         }
     }
     0

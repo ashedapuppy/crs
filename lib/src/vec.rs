@@ -1,4 +1,5 @@
 use std::{
+    ffi::CString,
     fmt::Display,
     ops::{Add, Div, Mul, Sub},
 };
@@ -109,6 +110,11 @@ fn dup_vec(v: Vector) -> Vector {
 #[ffi_export]
 fn fmt_vec(v: Vector) -> char_p_boxed {
     char_p::new(v.to_string())
+}
+
+#[ffi_export]
+fn fmt_vec_ow(prev: &mut char_p_boxed, v: Vector) {
+    *prev = CString::new(v.to_string()).unwrap().into();
 }
 
 #[ffi_export]
