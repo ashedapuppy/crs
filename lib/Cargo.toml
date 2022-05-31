@@ -9,6 +9,7 @@ crate-type = ["staticlib", "cdylib"]
 [dependencies]
 regex = "1.5.6"
 safer-ffi = { version = "0.0.10", features = ["proc_macros"] }
+fast_inv_sqrt = "1.0.1"
 
 [features]
 c-headers = ["safer-ffi/headers"]
