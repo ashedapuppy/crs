@@ -6,7 +6,7 @@ use std::{
 use ::safer_ffi::prelude::*;
 use fast_inv_sqrt::InvSqrt64;
 
-mod vec_simple_ops;
+mod vec_wrappers;
 
 pub trait VectorMath {
     fn dot_product(&self, other: &Self) -> f64;
