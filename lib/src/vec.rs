@@ -16,9 +16,6 @@ pub trait VectorMath {
     fn normalise(&self) -> Self;
     fn fast_normalise(&self) -> Self;
     fn angle(&self, other: &Self) -> f64;
-    fn i() -> Self;
-    fn j() -> Self;
-    fn k() -> Self;
 }
 
 #[derive_ReprC]
@@ -137,15 +134,24 @@ impl VectorMath for Vector {
         .to_degrees()
     }
 
-    fn i() -> Self {
-        Vector { x: 1.0, y: 0.0, z: 0.0 }
-    }
+}
 
-    fn j() -> Self {
-        Vector { x: 0.0, y: 1.0, z: 0.0 }
-    }
+#[allow(dead_code)]
+fn i() -> Vector {
+Vector { x: 1.0, y: 0.0, z: 0.0 }
+}
 
-    fn k() -> Self {
-        Vector { x: 0.0, y: 0.0, z: 1.0 }
-    }
+#[allow(dead_code)]
+fn j() -> Vector {
+Vector { x: 0.0, y: 1.0, z: 0.0 }
+}
+
+#[allow(dead_code)]
+fn k() -> Vector {
+Vector { x: 0.0, y: 0.0, z: 1.0 }
+}
+    
+#[allow(dead_code)]
+fn origin() -> Vector {
+    Vector { x: 0.0, y: 0.0, z: 0.0 }
 }

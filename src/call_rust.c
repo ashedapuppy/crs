@@ -57,9 +57,16 @@ int main(int argc, char **argv) {
     Vector_t u = new_vec(1, 2, 3);
     char *u_fmt = fmt_vec(u);
     printf("u: %s\n\n", u_fmt);
-    fmt_vec_ow(&u_fmt, *normalise_vec(&u));
+    fmt_vec_ow(&u_fmt, normalise_vec(u));
     printf("u: %s\n\n", u_fmt);
-    free_vec(u);
+
+    Vector_t v = normalise_vec(sub_vec(add_vec(u, u), u));
+    char *v_fmt = fmt_vec(v);
+    printf("v: %s\n\n", v_fmt);
+
+    // free(u);
     free(u_fmt);
+    free(v_fmt);
+    printf("to int: %d\n\n", rs_to_int(4.5).result);
     return 0;
 }
