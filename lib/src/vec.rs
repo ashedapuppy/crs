@@ -9,13 +9,12 @@ use fast_inv_sqrt::InvSqrt64;
 mod vec_wrappers;
 
 pub trait VectorMath {
-    fn dot_product(&self, other: &Self) -> f64;
-    fn dot_product_self(&self) -> f64;
-    fn cross_product(&self, other: &Self) -> Self;
+    fn scalar_product(&self, other_vec: &Self) -> f64;
+    fn cross_product(&self, other_vec: &Self) -> Self;
     fn magnitude(&self) -> f64;
     fn normalise(&self) -> Self;
     fn fast_normalise(&self) -> Self;
-    fn angle(&self, other: &Self) -> f64;
+    fn angle(&self, other_vec: &Self) -> f64;
 }
 
 #[derive_ReprC]
@@ -52,11 +51,11 @@ impl From<Vector> for (f64, f64, f64) {
 impl Add for Vector {
     type Output = Vector;
 
-    fn add(self, other: Vector) -> Vector {
+    fn add(self, addend: Vector) -> Vector {
         Vector {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
+            x: self.x + addend.x,
+            y: self.y + addend.y,
+            z: self.z + addend.z,
         }
     }
 }
@@ -64,11 +63,11 @@ impl Add for Vector {
 impl Sub for Vector {
     type Output = Vector;
 
-    fn sub(self, other: Vector) -> Vector {
+    fn sub(self, subtrahend: Vector) -> Vector {
         Vector {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
+            x: self.x - subtrahend.x,
+            y: self.y - subtrahend.y,
+            z: self.z - subtrahend.z,
         }
     }
 }
@@ -76,11 +75,11 @@ impl Sub for Vector {
 impl Mul<f64> for Vector {
     type Output = Vector;
 
-    fn mul(self, other: f64) -> Vector {
+    fn mul(self, multiplicand: f64) -> Vector {
         Vector {
-            x: self.x * other,
-            y: self.y * other,
-            z: self.z * other,
+            x: self.x * multiplicand,
+            y: self.y * multiplicand,
+            z: self.z * multiplicand,
         }
     }
 }
@@ -88,34 +87,30 @@ impl Mul<f64> for Vector {
 impl Div<f64> for Vector {
     type Output = Vector;
 
-    fn div(self, other: f64) -> Vector {
+    fn div(self, denominator: f64) -> Vector {
         Vector {
-            x: self.x / other,
-            y: self.y / other,
-            z: self.z / other,
+            x: self.x / denominator,
+            y: self.y / denominator,
+            z: self.z / denominator,
         }
     }
 }
 
 impl VectorMath for Vector {
-    fn dot_product(&self, other: &Self) -> f64 {
-        self.x * other.x + self.y * other.y + self.z * other.z
+    fn scalar_product(&self, other_vec: &Self) -> f64 {
+        self.x * other_vec.x + self.y * other_vec.y + self.z * other_vec.z
     }
 
-    fn dot_product_self(&self) -> f64 {
-        self.x * self.x + self.y * self.y + self.z * self.z
-    }
-
-    fn cross_product(&self, other: &Self) -> Self {
+    fn cross_product(&self, other_vec: &Self) -> Self {
         Vector {
-            x: self.y * other.z - self.z * other.y,
-            y: self.z * other.x - self.x * other.z,
-            z: self.x * other.y - self.y * other.x,
+            x: self.y * other_vec.z - self.z * other_vec.y,
+            y: self.z * other_vec.x - self.x * other_vec.z,
+            z: self.x * other_vec.y - self.y * other_vec.x,
         }
     }
 
     fn magnitude(&self) -> f64 {
-        f64::sqrt(self.dot_product_self())
+        f64::sqrt(self.scalar_product(self))
     }
 
     fn normalise(&self) -> Self {
@@ -123,35 +118,33 @@ impl VectorMath for Vector {
     }
 
     fn fast_normalise(&self) -> Self {
-        *self * (self.dot_product_self()).inv_sqrt64()
+        *self * (self.scalar_product(self)).inv_sqrt64()
     }
 
-    fn angle(&self, other: &Self) -> f64 {
-        self
-        .dot_product(other)
-        .div(self.magnitude() * other.magnitude())
-        .acos()
-        .to_degrees()
+    fn angle(&self, other_vec: &Self) -> f64 {
+        self.scalar_product(other_vec)
+            .div(self.magnitude() * other_vec.magnitude())
+            .acos()
+            .to_degrees()
     }
-
 }
 
-#[allow(dead_code)]
+#[ffi_export]
 fn i() -> Vector {
-Vector { x: 1.0, y: 0.0, z: 0.0 }
+    Vector { x: 1.0, y: 0.0, z: 0.0 }
 }
 
-#[allow(dead_code)]
+#[ffi_export]
 fn j() -> Vector {
-Vector { x: 0.0, y: 1.0, z: 0.0 }
+    Vector { x: 0.0, y: 1.0, z: 0.0 }
 }
 
-#[allow(dead_code)]
+#[ffi_export]
 fn k() -> Vector {
-Vector { x: 0.0, y: 0.0, z: 1.0 }
+    Vector { x: 0.0, y: 0.0, z: 1.0 }
 }
     
-#[allow(dead_code)]
+#[ffi_export]
 fn origin() -> Vector {
     Vector { x: 0.0, y: 0.0, z: 0.0 }
 }

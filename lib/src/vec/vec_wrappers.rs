@@ -67,7 +67,7 @@ fn div_vec_scalar(u: Vector, dividand: f64) -> Vector {
 
 #[ffi_export]
 fn dotprod_vec(u: Vector, v: Vector) -> f64 {
-    u.dot_product(&v)
+    u.scalar_product(&v)
 }
 
 #[ffi_export]
@@ -121,7 +121,6 @@ mod tests {
         let u_norm = new_vec(0.2672612419124244, 0.5345224838248488, 0.8017837257372732);
         let u_cp = dup_vec(u);
         assert_eq!(normalise_vec(u), u_norm);
-        println!("quake_normalised: {}", fast_normalise_vec(u_cp));
 
         let x = new_vec(3.0, 6.0, 1.0);
         let y = new_vec(-5.0, -9.0, 4.0);
@@ -129,14 +128,14 @@ mod tests {
 ||x|| = {}
 ||y|| = {}
 x o y = {}
-x̂ = {}
-ŷ = {}"#, 
+x^ = {}
+y^ = {}"#, 
         angle_vec(x, y), 
         magnitude_vec(x), 
         magnitude_vec(y), 
         dotprod_vec(x, y), 
         normalise_vec(x), 
         normalise_vec(y));
-
+        println!("quake_normalised: {}", fast_normalise_vec(u_cp));
     }
 }

@@ -6,16 +6,16 @@ _SRC       = call_rust
 
 
 # -- DO NOT MODIFY -- #
-MAKE 	   = make --no-print-directory 
-CC         = gcc
-CFLAGS     = -Wall -Wextra -Werror -g3 -O2 -std=c99
-CPPFLAGS   = -Iinclude/
-LDFLAGS    = -Llib/ -Wl,-rpath=./lib/ # set rpath so we don't have to use LD_LIBRARY_PATH
-LDLIBS     = -lcrs
-SRC        = $(addsuffix .c, $(addprefix src/, $(_SRC)))
-OBJ        = $(SRC:.c=.o)
-LIB_OUT    = libcrs.so
-LIB_HEADER = crs.h
+MAKE 	   := make --no-print-directory 
+CC         := gcc
+CFLAGS     := -Wall -Wextra -Werror -g3 -O2 -std=c99
+CPPFLAGS   := -Iinclude/
+LDFLAGS    := -Llib/ -Wl,-rpath=./lib/ # set rpath so we don't have to use LD_LIBRARY_PATH
+LDLIBS     := -lcrs
+SRC        := $(addsuffix .c, $(addprefix src/, $(_SRC)))
+OBJ        := $(SRC:.c=.o)
+LIB_OUT    := libcrs.so
+LIB_HEADER := crs.h
 
 define colorecho
       @tput setaf 5
@@ -35,7 +35,7 @@ clean: src_clean
 	@$(call colorecho, "cleaned")
 
 .PHONY: fclean
-fclean: lib_fclean src_fclean lib_clean_header
+fclean: lib_fclean src_clean lib_clean_header
 	@$(call colorecho, "fully cleaned")
 
 .PHONY: re
@@ -63,12 +63,10 @@ include_dir:
 
 src_clean:
 	@$(RM) $(OBJ)
+	@$(RM) $(OUT)
 
 lib_fclean:
 	@$(MAKE) -C lib fclean
-
-src_fclean: src_clean
-	@$(RM) $(OUT)
 
 lib_clean_header:
 	@$(RM) include/$(LIB_HEADER)

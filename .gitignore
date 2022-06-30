@@ -53,6 +53,9 @@ dkms.conf
 
 ## Custom ignores for this project
 
+# cache
+.cache/
+
 # executable name
 project
 

@@ -38,7 +38,7 @@ fn double_from_str(s: char_p::Ref<'_>) -> f64 {
     // Creating a regular expression to find matches starting with a sign and
     // followed by one or more digits.
     let re: Regex =
-        Regex::new(r"[+-]?[0-9]+[.]?[0-9]*([e][+-]?[0-9]+)?").expect("could not build regex");
+        Regex::new(r"[+-]?\d+[.]?\d*([e][+-]?\d+)?").expect("could not build regex");
     if let Some(cap) = re.captures(s_safe) {
         if let Some(mat) = cap.get(0) {
             if let Ok(number) = mat.as_str().parse::<f64>() {
@@ -115,7 +115,7 @@ fn doubles_from_str(s: char_p::Ref<'_>) -> slice_boxed<f64> {
         return arr.into();
     }
     let re: Regex =
-        Regex::new(r"[+-]?[0-9]+[.]?[0-9]*([e][+-]?[0-9]+)?").expect("could not build regex");
+        Regex::new(r"[+-]?\d+[.]?\d*([e][+-]?\d+)?").expect("could not build regex");
     let mut double_vec: Vec<f64> = Vec::new();
     for cap in re.captures_iter(s_safe) {
         if let Some(mat) = cap.get(0) {
