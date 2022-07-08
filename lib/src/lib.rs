@@ -1,7 +1,7 @@
 mod int;
+mod math;
 mod str;
 mod vec;
-mod math;
 
 #[::safer_ffi::cfg_headers]
 #[test]

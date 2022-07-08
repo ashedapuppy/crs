@@ -3,8 +3,8 @@ use std::{
     ops::{Add, Div, Mul, Sub},
 };
 
-use ::safer_ffi::prelude::*;
 use fast_inv_sqrt::InvSqrt64;
+use safer_ffi::prelude::*;
 
 mod vec_wrappers;
 
@@ -131,20 +131,36 @@ impl VectorMath for Vector {
 
 #[ffi_export]
 fn i() -> Vector {
-    Vector { x: 1.0, y: 0.0, z: 0.0 }
+    Vector {
+        x: 1.0,
+        y: 0.0,
+        z: 0.0,
+    }
 }
 
 #[ffi_export]
 fn j() -> Vector {
-    Vector { x: 0.0, y: 1.0, z: 0.0 }
+    Vector {
+        x: 0.0,
+        y: 1.0,
+        z: 0.0,
+    }
 }
 
 #[ffi_export]
 fn k() -> Vector {
-    Vector { x: 0.0, y: 0.0, z: 1.0 }
+    Vector {
+        x: 0.0,
+        y: 0.0,
+        z: 1.0,
+    }
 }
-    
+
 #[ffi_export]
 fn origin() -> Vector {
-    Vector { x: 0.0, y: 0.0, z: 0.0 }
+    Vector {
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+    }
 }

@@ -1,4 +1,4 @@
-use ::safer_ffi::prelude::*;
+use safer_ffi::prelude::*;
 
 #[ffi_export]
 fn rs_floor(i: f64) -> f64 {
@@ -250,22 +250,37 @@ fn rs_min(i: f64, j: f64) -> f64 {
 #[derive(Clone, PartialEq, Debug)]
 pub struct ConversionResult {
     result: i32,
-    error: Option<safer_ffi::char_p::char_p_boxed>
+    error: Option<safer_ffi::char_p::char_p_boxed>,
 }
 
 #[ffi_export]
 fn rs_to_int(i: f64) -> ConversionResult {
-    if i.is_infinite()  {
-        ConversionResult { result: 0, error: Some(char_p::new("i is infinite"))}
-    }else if i.is_nan() {
-        ConversionResult { result: 0, error: Some(char_p::new("i is nan"))} 
+    if i.is_infinite() {
+        ConversionResult {
+            result: 0,
+            error: Some(char_p::new("i is infinite")),
+        }
+    } else if i.is_nan() {
+        ConversionResult {
+            result: 0,
+            error: Some(char_p::new("i is nan")),
+        }
     } else if i > std::i32::MAX as f64 {
-        ConversionResult { result: 0, error: Some(char_p::new("i is too big"))}
+        ConversionResult {
+            result: 0,
+            error: Some(char_p::new("i is too big")),
+        }
     } else if i < std::i32::MIN as f64 {
-        ConversionResult { result: 0, error: Some(char_p::new("i is too small"))}
+        ConversionResult {
+            result: 0,
+            error: Some(char_p::new("i is too small")),
+        }
     } else {
-        ConversionResult { result: unsafe { i.to_int_unchecked::<i32>()}, error: None}
-    } 
+        ConversionResult {
+            result: unsafe { i.to_int_unchecked::<i32>() },
+            error: None,
+        }
+    }
 }
 
 #[ffi_export]

@@ -1,7 +1,7 @@
 #![allow(improper_ctypes_definitions)]
 
-use ::safer_ffi::prelude::*;
 use safer_ffi::char_p::char_p_boxed;
+use safer_ffi::prelude::*;
 use safer_ffi::slice::slice_boxed;
 
 use regex::Regex;
@@ -18,7 +18,7 @@ use regex::Regex;
 /// integer from s
 #[ffi_export]
 fn int_from_str(s: char_p::Ref<'_>) -> i32 {
-    let s_safe = s.to_str();
+    let s_safe: &str = s.to_str();
     // Creating a regular expression to find matches starting with a sign and
     // followed by one or more digits.
     let re: Regex = Regex::new(r"\+|-*\d+").expect("could not build regex");
@@ -34,11 +34,10 @@ fn int_from_str(s: char_p::Ref<'_>) -> i32 {
 
 #[ffi_export]
 fn double_from_str(s: char_p::Ref<'_>) -> f64 {
-    let s_safe = s.to_str();
+    let s_safe: &str = s.to_str();
     // Creating a regular expression to find matches starting with a sign and
     // followed by one or more digits.
-    let re: Regex =
-        Regex::new(r"[+-]?\d+[.]?\d*([e][+-]?\d+)?").expect("could not build regex");
+    let re: Regex = Regex::new(r"[+-]?\d+[.]?\d*([e][+-]?\d+)?").expect("could not build regex");
     if let Some(cap) = re.captures(s_safe) {
         if let Some(mat) = cap.get(0) {
             if let Ok(number) = mat.as_str().parse::<f64>() {
@@ -80,7 +79,7 @@ fn fmt_int(s: char_p::Ref<'_>) -> char_p_boxed {
 /// A slice of i32s.
 #[ffi_export]
 fn ints_from_str(s: char_p::Ref<'_>) -> slice_boxed<i32> {
-    let s_safe = s.to_str();
+    let s_safe: &str = s.to_str();
     let mut arr: Box<[i32]> = Box::new([]);
     if s_safe.is_empty() {
         return arr.into();
@@ -109,13 +108,12 @@ fn ints_from_str(s: char_p::Ref<'_>) -> slice_boxed<i32> {
 /// A slice of f64s
 #[ffi_export]
 fn doubles_from_str(s: char_p::Ref<'_>) -> slice_boxed<f64> {
-    let s_safe = s.to_str();
+    let s_safe: &str = s.to_str();
     let mut arr: Box<[f64]> = Box::new([]);
     if s_safe.is_empty() {
         return arr.into();
     }
-    let re: Regex =
-        Regex::new(r"[+-]?\d+[.]?\d*([e][+-]?\d+)?").expect("could not build regex");
+    let re: Regex = Regex::new(r"[+-]?\d+[.]?\d*([e][+-]?\d+)?").expect("could not build regex");
     let mut double_vec: Vec<f64> = Vec::new();
     for cap in re.captures_iter(s_safe) {
         if let Some(mat) = cap.get(0) {

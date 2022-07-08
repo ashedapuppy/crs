@@ -1,8 +1,8 @@
 #![allow(improper_ctypes_definitions)]
 #![allow(unused_imports)]
 
-use ::safer_ffi::prelude::*;
 use regex::Regex;
+use safer_ffi::prelude::*;
 use safer_ffi::{char_p::char_p_boxed, slice::slice_boxed, slice::slice_ref};
 
 /// `rust_free_string_array` is a function that takes a `slice::Box<char_p_boxed>` and drops it
@@ -159,7 +159,7 @@ mod tests {
     use std::ffi::{CStr, CString};
 
     use super::*;
-    use ::safer_ffi::prelude::*;
+    use safer_ffi::prelude::*;
     use safer_ffi::{
         char_p::{char_p_boxed, char_p_ref},
         slice::slice_boxed,
