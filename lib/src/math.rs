@@ -265,12 +265,12 @@ fn rs_to_int(i: f64) -> ConversionResult {
             result: 0,
             error: Some(char_p::new("i is nan")),
         }
-    } else if i > std::i32::MAX as f64 {
+    } else if i > f64::from(std::i32::MAX) {
         ConversionResult {
             result: 0,
             error: Some(char_p::new("i is too big")),
         }
-    } else if i < std::i32::MIN as f64 {
+    } else if i < f64::from(std::i32::MIN) {
         ConversionResult {
             result: 0,
             error: Some(char_p::new("i is too small")),

@@ -1,5 +1,5 @@
 use ::safer_ffi::prelude::*;
-use safer_ffi::char_p::*;
+use safer_ffi::char_p::char_p_boxed;
 use std::ffi::CString;
 
 use super::Vector;
@@ -7,7 +7,7 @@ use super::VectorMath;
 
 #[ffi_export]
 fn free_vec(v: Vector) {
-    drop(v)
+    drop(v);
 }
 
 #[ffi_export]
@@ -102,9 +102,10 @@ mod tests {
     #[test]
     fn test_dup_vec() {
         let v = new_vec(1.0, 2.0, 3.0);
-        assert_eq!(v.x, 1.0);
-        assert_eq!(v.y, 2.0);
-        assert_eq!(v.z, 3.0);
+        let error_margin = f64::EPSILON;
+        assert!(v.x - 1.0 < error_margin);
+        assert!(v.y - 2.0 < error_margin);
+        assert!(v.x - 3.0 < error_margin);
         let u = dup_vec(v);
         assert_eq!(u, v);
     }
@@ -118,7 +119,7 @@ mod tests {
         assert_eq!(sub_vec(u, v), crate::vec::origin());
         assert_eq!(mul_vec_scalar(u, 2f64), result);
         assert_eq!(div_vec_scalar(result, 2f64), v);
-        let u_norm = new_vec(0.2672612419124244, 0.5345224838248488, 0.8017837257372732);
+        let u_norm = new_vec(0.267_261_241_912_424_4, 0.534_522_483_824_848_8, 0.801_783_725_737_273_2);
         let u_cp = dup_vec(u);
         assert_eq!(normalise_vec(u), u_norm);
 

@@ -19,7 +19,7 @@ pub trait VectorMath {
 
 #[derive_ReprC]
 #[repr(C)]
-#[derive(Clone, PartialEq, Debug, Copy)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub struct Vector {
     x: f64,
     y: f64,
@@ -49,10 +49,10 @@ impl From<Vector> for (f64, f64, f64) {
 }
 
 impl Add for Vector {
-    type Output = Vector;
+    type Output = Self;
 
-    fn add(self, addend: Vector) -> Vector {
-        Vector {
+    fn add(self, addend: Self) -> Self {
+        Self {
             x: self.x + addend.x,
             y: self.y + addend.y,
             z: self.z + addend.z,
@@ -61,10 +61,10 @@ impl Add for Vector {
 }
 
 impl Sub for Vector {
-    type Output = Vector;
+    type Output = Self;
 
-    fn sub(self, subtrahend: Vector) -> Vector {
-        Vector {
+    fn sub(self, subtrahend: Self) -> Self {
+        Self {
             x: self.x - subtrahend.x,
             y: self.y - subtrahend.y,
             z: self.z - subtrahend.z,
@@ -73,10 +73,10 @@ impl Sub for Vector {
 }
 
 impl Mul<f64> for Vector {
-    type Output = Vector;
+    type Output = Self;
 
-    fn mul(self, multiplicand: f64) -> Vector {
-        Vector {
+    fn mul(self, multiplicand: f64) -> Self {
+        Self {
             x: self.x * multiplicand,
             y: self.y * multiplicand,
             z: self.z * multiplicand,
@@ -85,10 +85,10 @@ impl Mul<f64> for Vector {
 }
 
 impl Div<f64> for Vector {
-    type Output = Vector;
+    type Output = Self;
 
-    fn div(self, denominator: f64) -> Vector {
-        Vector {
+    fn div(self, denominator: f64) -> Self {
+        Self {
             x: self.x / denominator,
             y: self.y / denominator,
             z: self.z / denominator,
@@ -98,11 +98,11 @@ impl Div<f64> for Vector {
 
 impl VectorMath for Vector {
     fn scalar_product(&self, other_vec: &Self) -> f64 {
-        self.x * other_vec.x + self.y * other_vec.y + self.z * other_vec.z
+        self.z.mul_add(other_vec.z, self.x.mul_add(other_vec.x, self.y * other_vec.y))
     }
 
     fn cross_product(&self, other_vec: &Self) -> Self {
-        Vector {
+        Self {
             x: self.y * other_vec.z - self.z * other_vec.y,
             y: self.z * other_vec.x - self.x * other_vec.z,
             z: self.x * other_vec.y - self.y * other_vec.x,

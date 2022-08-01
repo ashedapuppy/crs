@@ -12,7 +12,7 @@ use safer_ffi::{char_p::char_p_boxed, slice::slice_boxed, slice::slice_ref};
 /// * `arr`: slice::Box<char_p_boxed>
 #[ffi_export]
 fn free_str_arr(arr: slice_boxed<char_p_boxed>) {
-    drop(arr)
+    drop(arr);
 }
 
 #[ffi_export]
@@ -87,7 +87,7 @@ fn split_str(s: char_p::Ref<'_>, separators: char_p::Ref<'_>) -> slice_boxed<cha
 
     // take all the separated tokens found with the regex and add them to a string vector
     let mut str_vec: Vec<&str> = Vec::new();
-    for token in separator_re.split(s_safe).into_iter() {
+    for token in separator_re.split(s_safe) {
         str_vec.push(token);
     }
 
@@ -218,7 +218,7 @@ mod tests {
     #[test]
     fn test_push_str() {
         let a = CString::new("hello").unwrap();
-        let b = push_str(char_p_ref::from(a.as_c_str()), '!' as u8);
+        let b = push_str(char_p_ref::from(a.as_c_str()), b'!');
         assert_eq!(b.to_str(), "hello!");
     }
 
